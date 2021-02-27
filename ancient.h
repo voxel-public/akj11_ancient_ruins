@@ -6,6 +6,7 @@
 #define DIR_SOUTH 2
 #define DIR_WEST 3
 
+extern char ancient_is_animation_frame;
 void ancient_player_left_room( char direction );
 
 #endif

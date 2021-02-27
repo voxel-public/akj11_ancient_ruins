@@ -46,6 +46,8 @@ const char PALETTE[32] = {
   0x0D,0x27,0x2A	// sprite palette 3
 };
 
+char ancient_is_animation_frame;
+char frame_count;
 // setup PPU and tables
 void setup_graphics() {
   // clear sprites
@@ -67,14 +69,13 @@ void main(void)
   ppu_on_all();
   
   while(1) {
+    ancient_is_animation_frame = frame_count % 8 == 0;
+    ++frame_count;
     pad = pad_poll( 0 );
     player_tick( pad );
     oam_id = 0;
     //draw player
-    oam_id = oam_spr( player_pos_x, player_pos_y, 0xE0, 0x01, oam_id );
-    oam_id = oam_spr( player_pos_x+8, player_pos_y, 0xE2, 0x01, oam_id );
-    oam_id = oam_spr( player_pos_x, player_pos_y+8, 0xE1, 0x01, oam_id );
-    oam_id = oam_spr( player_pos_x+8, player_pos_y+8, 0xE3, 0x01, oam_id );
+    oam_id = player_draw_oam( oam_id );
     //Hide any extra unused oam
     oam_hide_rest( oam_id );
     ppu_wait_frame();

@@ -20,9 +20,9 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 
 0.3 	Animated player
 *0.3.1	Static player sprite
-0.3.2	Animation
-0.3.3	Directional animated
-0.3.4	Stateful (keep last direction moved when stationary)
+*0.3.2	Animation
+*0.3.3	Directional animated
+*0.3.4	Stateful (keep last direction moved when stationary)
 
 
 Game Idea: ADVENTURELIKE
