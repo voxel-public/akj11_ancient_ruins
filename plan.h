@@ -14,9 +14,15 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 *0.1.5	Player can leave screen (doesn't do anything, but room exit is triggered, maybe teleport player)
 
 0.2	Multi room prototype
-0.2.1	Define a few test rooms
-0.2.2	Define a meta map of rooms
-0.2.3	Allow player to move between rooms
+*0.2.1	Define a few test rooms
+*0.2.2	Define a meta map of rooms
+*0.2.3	Allow player to move between rooms
+
+0.3 	Animated player
+0.3.1	Static player sprite
+0.3.2	Animation
+0.3.3	Directional animated
+0.3.4	Stateful (keep last direction moved when stationary)
 
 
 Game Idea: ADVENTURELIKE

@@ -1,3 +1,5 @@
+
+#include "ancient.h"
 #include "plan.h"
 //Ancient ruins
 //Alakajam 11 entry by voxel
@@ -56,12 +58,14 @@ void main(void)
 {
   char oam_id, pad;
   setup_graphics();
-  // draw test room
-  room_draw_test();
+  
+  player_set_map_position( 0, 0 );
+  player_set_position( 240/2, 200/2 );  
+  room_load( room_map[0] );
+  
   // enable rendering
   ppu_on_all();
-  // infinite loop
-  player_set_position( 32, 32 );  
+  
   while(1) {
     pad = pad_poll( 0 );
     player_tick( pad );
@@ -75,4 +79,28 @@ void main(void)
     oam_hide_rest( oam_id );
     ppu_wait_frame();
   }
+}
+
+void ancient_player_left_room( char direction ){
+  switch( direction ){
+    case DIR_NORTH:
+      player_set_position( player_pos_x, ROOM_HEIGHT - 2 );
+      player_set_map_position( player_map_x, player_map_y - 1 );
+      break;
+    case DIR_SOUTH:
+      player_set_position( player_pos_x, 2 );
+      player_set_map_position( player_map_x, player_map_y + 1 );
+      break;
+    case DIR_EAST:
+      player_set_position( 2, player_pos_y );
+      player_set_map_position( player_map_x + 1, player_map_y );
+      break;
+    case DIR_WEST:
+      player_set_position( ROOM_WIDTH - 2, player_pos_y );
+      player_set_map_position( player_map_x - 1, player_map_y );
+      break;
+  }
+  ppu_off();
+  room_load_current();
+  ppu_on_all();
 }

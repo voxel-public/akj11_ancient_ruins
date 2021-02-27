@@ -1,8 +1,15 @@
 #include "player.h"
 #include "neslib.h"
 #include "room.h"
+#include "ancient.h"
 
 char player_pos_x, player_pos_y;
+char player_map_x, player_map_y;
+
+void player_set_map_position( char x, char y ){
+  player_map_x = x % ROOM_MAP_WIDTH;
+  player_map_y = y % ROOM_MAP_HEIGHT;
+}
 
 void player_set_position( char x, char y ){
   player_pos_x = x;
@@ -38,8 +45,12 @@ void player_tick( char pad ){
     player_pos_x = future_x;
   }
   
-  if ( player_pos_x < 1 || player_pos_x > 239 || player_pos_y < 1 || player_pos_y > 207 ){
-    player_pos_x = (256/2);
-    player_pos_y = (240/2);
-  }
+  if ( player_pos_x <= 1 )
+    ancient_player_left_room( DIR_WEST );
+  else if ( player_pos_x >= ROOM_WIDTH )
+    ancient_player_left_room( DIR_EAST );
+  else if ( player_pos_y <= 1 )
+    ancient_player_left_room( DIR_NORTH );
+  else if ( player_pos_y >= ROOM_HEIGHT )
+    ancient_player_left_room( DIR_SOUTH );
 }
