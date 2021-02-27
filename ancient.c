@@ -1,4 +1,3 @@
-
 #include "plan.h"
 //Ancient ruins
 //Alakajam 11 entry by voxel
@@ -25,6 +24,11 @@
 #include "vrambuf.h"
 //#link "vrambuf.c"
 
+#include "room.h"
+//#link "room.c"
+#include "player.h"
+//#link "player.c"
+
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] = { 
   0x03,			// screen color
@@ -50,13 +54,23 @@ void setup_graphics() {
 
 void main(void)
 {
+  char oam_id;
   setup_graphics();
-  // draw message  
-  vram_adr(NTADR_A(10,12));
-  vram_write("HELL WORLD!", 12);
+  // draw test room
+  room_draw_test();
   // enable rendering
   ppu_on_all();
   // infinite loop
+  player_set_position( 32, 32 );  
   while(1) {
+    oam_id = 0;
+    //draw player
+    oam_id = oam_spr( player_pos_x, player_pos_y, 0xE0, 0x00, oam_id );
+    oam_id = oam_spr( player_pos_x+8, player_pos_y, 0xE2, 0x00, oam_id );
+    oam_id = oam_spr( player_pos_x, player_pos_y+8, 0xE1, 0x00, oam_id );
+    oam_id = oam_spr( player_pos_x+8, player_pos_y+8, 0xE3, 0x00, oam_id );
+    //Hide any extra unused oam
+    oam_hide_rest( oam_id );
+    ppu_wait_frame();
   }
 }
