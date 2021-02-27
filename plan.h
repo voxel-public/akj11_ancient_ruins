@@ -9,7 +9,7 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 0.1	Single room prototype
 *0.1.1	Draw a test room to screen
 *0.1.2	Draw a player sprite to screen
-0.1.3	Player can be moved
+*0.1.3	Player can be moved
 0.1.4	Player to wall collision detection and handling
 0.1.5	Player can leave screen (doesn't do anything, but room exit is triggered, maybe teleport player)
 

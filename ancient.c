@@ -54,7 +54,7 @@ void setup_graphics() {
 
 void main(void)
 {
-  char oam_id;
+  char oam_id, pad;
   setup_graphics();
   // draw test room
   room_draw_test();
@@ -63,6 +63,8 @@ void main(void)
   // infinite loop
   player_set_position( 32, 32 );  
   while(1) {
+    pad = pad_poll( 0 );
+    player_tick( pad );
     oam_id = 0;
     //draw player
     oam_id = oam_spr( player_pos_x, player_pos_y, 0xE0, 0x00, oam_id );
