@@ -18,7 +18,23 @@ const char room_test_data[] = {
           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 	  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
         };
-  
+
+//Note that visible onscreen space starts at 8x8
+char room_is_point_clear( char x, char y ){
+  char tx, ty, data_index;
+  tx = x >> 4;
+  ty = y >> 4;
+  data_index = ty * ROOM_DATA_WIDTH + tx;
+  return room_data[data_index] == 0;
+}
+
+char room_is_square_clear( char x, char y, char size ){
+  return room_is_point_clear( x, y ) && 
+    room_is_point_clear( x + size, y ) && 
+    room_is_point_clear( x, y + size ) &&
+    room_is_point_clear( x + size, y + size );
+}
+
 void room_load( const char source[] ){
   char i = 0;
   while( i < ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT ){
