@@ -24,7 +24,48 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 *0.3.3	Directional animated
 *0.3.4	Stateful (keep last direction moved when stationary)
 
+0.4	Player statuses
+*0.4.1	Submerge
+*0.4.2	Death
+*0.4.3	Reforming
 
+0.5	Map
+*0.5.1	Map designed
+0.5.2	Map drawn in map editor
+0.5.3	Map ingame
+	Convert room data to bytecode
+        Layout map in ROM
+0.5.4	Map collectible art
+0.5.5	Map interface art
+0.5.6	Track room status
+		Unknown
+                Explored
+                Adjacent (been in a neighbouring room)
+0.5.7	Render map
+0.5.8	Don't render map pickup if already collected
+
+0.6 	Dash
+0.6.1	Dash collectible art
+0.6.2	Dash effect art
+0.6.3	Dash effect
+0.6.4	Don't render dash pickup if already collected
+
+0.7 	Enemy
+0.7.1	Enemy prototype
+0.7.2	Kill player on contact
+0.7.3	Enemy patrol pathfinding 
+0.7.4 	Enemy seek behaviour
+0.7.5	Enemy polish
+
+0.8	Audio
+0.8.1	General music
+0.8.2	Danger music
+0.8.3	Dash effect
+0.8.4 	Pickup effect
+
+0.9	Interest
+0.9.1	Critters?
+0.9.2	More interesting map tiles
 
 Game Idea: ADVENTURELIKE
 
@@ -43,5 +84,5 @@ Globally toggleable walls, standard switches throughout the world allow these wa
 
 Sliding ice / directional movement tiles like chips challenge or pokemon
 
-
+Add a cherry stem?
 */
