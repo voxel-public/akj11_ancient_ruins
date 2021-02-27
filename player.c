@@ -30,7 +30,6 @@ void player_tick( char pad ){
     future_y += 1;
     lead_y = 2;
   }
-      
   
   if ( room_is_square_clear( player_pos_x, future_y+lead_y, 5 ) ){
     player_pos_y = future_y;
@@ -39,4 +38,8 @@ void player_tick( char pad ){
     player_pos_x = future_x;
   }
   
+  if ( player_pos_x < 1 || player_pos_x > 239 || player_pos_y < 1 || player_pos_y > 207 ){
+    player_pos_x = (256/2);
+    player_pos_y = (240/2);
+  }
 }
