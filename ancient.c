@@ -1,4 +1,3 @@
-
 #include "ancient.h"
 #include "plan.h"
 //Ancient ruins
