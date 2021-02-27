@@ -25,6 +25,7 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 *0.3.4	Stateful (keep last direction moved when stationary)
 
 
+
 Game Idea: ADVENTURELIKE
 
 Explore a simple, abstract, ruined world with few hazards. Collect a few key items to unlock areas and make 

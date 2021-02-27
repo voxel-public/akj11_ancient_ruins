@@ -2,6 +2,9 @@
 #include "neslib.h"
 #include "player.h"
 
+#define TILE_EMPTY 0x00
+#define TILE_SHADOW 0x02
+
 char room_data[ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT];
 
 const char room_test_data1[] = {
@@ -83,7 +86,7 @@ void room_load( const char source[] ){
 //Draw the currently loaded room to screen, assumes PPU is off
 void room_draw( void ){
   char buffer[32*2]; //Two rows of nametable data to draw
-  char x, y, data_index, buffer_index, cell;
+  char x, y, data_index, prev_data_index, buffer_index, cell;
   
   for ( y = 0; y < ROOM_DATA_HEIGHT; ++y ){
     for ( x = 0; x < ROOM_DATA_WIDTH; ++x ){
@@ -91,10 +94,25 @@ void room_draw( void ){
       buffer_index = x * 2;
       cell = room_data[data_index];
       if ( cell == 0 ){ //Empty
-        buffer[buffer_index] = 0;
-        buffer[buffer_index+1] = 0;
-        buffer[buffer_index+32] = 0;
-        buffer[buffer_index+32+1] = 0;
+        buffer[buffer_index] = TILE_EMPTY;
+        buffer[buffer_index+1] = TILE_EMPTY;
+        buffer[buffer_index+32] = TILE_EMPTY;
+        buffer[buffer_index+32+1] = TILE_EMPTY;
+        if ( y > 0 ){
+          prev_data_index = (y-1) * ROOM_DATA_WIDTH + x;
+          buffer[buffer_index+1] = room_data[prev_data_index] > 0 ? TILE_SHADOW : TILE_EMPTY;
+	  buffer[buffer_index] = room_data[prev_data_index] > 0 ? TILE_SHADOW : buffer[buffer_index];
+        }
+        if ( x > 0 ){
+          prev_data_index = y * ROOM_DATA_WIDTH + ( x - 1 );
+          buffer[buffer_index+32] = room_data[prev_data_index] > 0 ? TILE_SHADOW : TILE_EMPTY;
+          buffer[buffer_index] = room_data[prev_data_index] > 0 ? TILE_SHADOW : buffer[buffer_index];
+        }
+        if ( x > 0 && y > 0 ){
+          prev_data_index = ( y - 1 ) * ROOM_DATA_WIDTH + ( x - 1 );
+          buffer[buffer_index] = room_data[prev_data_index] > 0 ? TILE_SHADOW : buffer[buffer_index];
+        }
+        
       } else if ( cell == 1 ){
         buffer[buffer_index] = 0xF4;
         buffer[buffer_index+1] = 0xF6;
@@ -105,7 +123,8 @@ void room_draw( void ){
     vram_adr( NTADR_A( 1, 1+y*2 ) );
     vram_write( buffer, 64 );
   }
-
+  vram_adr( NTADR_A( 1, 27 ) );
+  vram_fill( TILE_SHADOW, 32 );
 }
 
 void room_load_current( void ){

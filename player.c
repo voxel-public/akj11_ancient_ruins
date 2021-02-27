@@ -4,6 +4,7 @@
 #include "ancient.h"
 
 #define PLAYER_ANIMATION_FRAMECOUNT 3
+#define TILE_SHADOW 0xB0
 
 char player_facing_right = true;
 char player_animation_frame = 0;
@@ -47,15 +48,15 @@ void player_tick( char pad ){
   }
   if ( pad & PAD_DOWN ){
     future_y += 1;
-    lead_y = 2;
+    lead_y = 4;
     is_moving = true;
   }
   
   //Check for collisions and apply movement
-  if ( room_is_square_clear( player_pos_x, future_y+lead_y, 5 ) ){
+  if ( room_is_square_clear( player_pos_x, future_y+lead_y, 6 ) ){
     player_pos_y = future_y;
   }
-  if ( room_is_square_clear( future_x+lead_x, player_pos_y, 5 ) ){
+  if ( room_is_square_clear( future_x+lead_x, player_pos_y, 6 ) ){
     player_pos_x = future_x;
   }
   
@@ -96,6 +97,8 @@ char player_draw_oam( char oam_id ){
       break;
   }
 
+
+  //Player character
   if ( player_facing_right ){
     oam_id = oam_spr( player_pos_x, player_pos_y, base_index, 0x01, oam_id );
     oam_id = oam_spr( player_pos_x+8, player_pos_y, base_index+2, 0x01, oam_id );
@@ -107,5 +110,8 @@ char player_draw_oam( char oam_id ){
     oam_id = oam_spr( player_pos_x+8, player_pos_y+8, base_index+1, 0x01 | OAM_FLIP_H, oam_id );
     oam_id = oam_spr( player_pos_x, player_pos_y+8, base_index+3, 0x01 | OAM_FLIP_H, oam_id );
   }
+  //Shadow
+  oam_id = oam_spr( player_pos_x, player_pos_y + 12, TILE_SHADOW, 0x02 | OAM_BEHIND, oam_id );
+  oam_id = oam_spr( player_pos_x+8, player_pos_y + 12, TILE_SHADOW, 0x02 | OAM_FLIP_H | OAM_BEHIND, oam_id );
   return oam_id;
 }
