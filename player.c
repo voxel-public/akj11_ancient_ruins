@@ -17,6 +17,7 @@
 #define TILE_PLAYER_SHADOW 0xB0
 
 char player_facing_right = true;
+char player_slide_x, player_slide_y;
 char player_animation_frame = 0;
 char player_pos_x[5], player_pos_y[5];
 char player_map_x, player_map_y;
@@ -24,7 +25,6 @@ char player_prev_tx, player_prev_ty;
 char player_state;
 char player_spawn_map_x, player_spawn_map_y, player_spawn_pos_x, player_spawn_pos_y;
 char player_dash_duration;
-char player_dash_dx, player_dash_dy, player_dash_lead_x, player_dash_lead_y;
 
 void player_set_map_position( char x, char y ){
   player_map_x = x % ROOM_MAP_WIDTH;
@@ -40,6 +40,14 @@ void player_set_position( char x, char y ){
   }
 }
 
+void player_align_x(){
+  player_pos_x[0] = ( ( player_pos_x[0] >> 4 ) << 4 ) + 8;
+}
+
+void player_align_y(){
+  player_pos_y[0] = ( ( player_pos_y[0] >> 4 ) << 4 ) + 8;
+}
+
 void player_tick( char pad ){
   char i;
   char tx, ty;
@@ -48,7 +56,7 @@ void player_tick( char pad ){
   char lead_x = 0;
   char lead_y = 0;
   char is_moving = false;
-  char dx, dy;
+  signed char dx, dy;
   char tile;
   
   //Update trail positions
@@ -59,8 +67,13 @@ void player_tick( char pad ){
     --i; 
   }
   
-  // Dash?
-  if ( pad & PAD_B && pickup_collected_dash ){
+  if ( player_state & PLAYER_STATE_SLIDING ) { 
+    if ( player_slide_x == 0 && player_slide_y == 0 ){ //sanity check
+      player_set_state( player_state & ~PLAYER_STATE_SLIDING );
+    }
+    dx = player_slide_x;
+    dy = player_slide_y;
+  } else if ( pad & PAD_B && pickup_collected_dash ){ // Dash?
     if ( pad & PAD_LEFT ){
       dx = -PLAYER_DASH_SPEED;
       player_facing_right = false;
@@ -127,13 +140,58 @@ void player_tick( char pad ){
     if ( tile == TILE_SWITCH ){
       ancient_toggle_barrier();
     }
+    if ( tile == TILE_DIR_N ){
+      player_slide_x = 0;
+      player_slide_y = -1;
+      player_set_state( player_state | PLAYER_STATE_SLIDING );
+      player_align_x();
+    } else if ( tile == TILE_DIR_E ){
+      player_slide_x = 1;
+      player_slide_y = 0;
+      player_set_state( player_state | PLAYER_STATE_SLIDING );
+      player_align_y();
+    } else if ( tile == TILE_DIR_S ){
+      player_slide_x = 0;
+      player_slide_y = 1;
+      player_set_state( player_state | PLAYER_STATE_SLIDING );
+      player_align_x();
+    } else if ( tile == TILE_DIR_W ){
+      player_slide_x = -1;
+      player_slide_y = 0;
+      player_set_state( player_state | PLAYER_STATE_SLIDING );
+      player_align_y();
+    } else if ( tile == TILE_DIR_SLIDE ){
+      if ( !( player_state & PLAYER_STATE_SLIDING ) ){
+        if ( dy > 0 ){
+          player_slide_y = 1;
+          player_slide_x = 0;
+          player_align_x();
+        } else if ( dy < 0 ){
+          player_slide_y = -1;
+          player_slide_x = 0;
+          player_align_x();
+        } else if ( dx > 0 ) {
+          player_slide_y = 0;
+          player_slide_x = 1;
+          player_align_y();
+        } else {
+          player_slide_y = 0;
+          player_slide_x = -1;
+          player_align_y();
+        }
+        player_set_state( player_state | PLAYER_STATE_SLIDING );
+      }
+    } else { //not sliding
+      player_slide_x = 0;
+      player_slide_y = 0;
+    }
   }
   
   
   //Movement code has ended up a bit weird i'll admit
   //Apply y movement
   while( dy != 0 ){
-    if ( dy > 128 ) { //'negative'
+    if ( dy < 0 ) { //'negative'
       future_y = player_pos_y[0] - 1;
       dy += 1;  
     } else {
@@ -146,7 +204,7 @@ void player_tick( char pad ){
   }
   //Apply x movement
   while( dx != 0 ){
-    if ( dx > 128 ) { //'negative'
+    if ( dx < 0 ) { //'negative'
       future_x = player_pos_x[0] - 1;
       dx += 1;  
     } else {

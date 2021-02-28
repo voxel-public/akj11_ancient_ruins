@@ -58,7 +58,7 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 *0.7.5	Enemy polish
 
 0.8 	Other map elements
-0.8.1	Tile art
+*0.8.1	Tile art
 	Barrier A active, inactive
         Barrier B active, inactive
         Directional tiles
@@ -68,8 +68,8 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 *0.8.2	Barrier state
 *0.8.3  Barrier toggle
 *0.8.4 	Spawn point
-0.8.5	Pushtiles enforce movement
-0.8.6 	Pushtiles disable dash
+*0.8.5	Pushtiles enforce movement
+*0.8.6 	Pushtiles disable dash
 
 0.9	Audio
 0.8.1	General music

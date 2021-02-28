@@ -168,6 +168,37 @@ void room_draw( void ){
           buffer[buffer_index+32+1] = 0xF3;
         }
       }
+      if ( cell == TILE_DIR_N ){
+        buffer[buffer_index] = 0x83;
+        buffer[buffer_index+1] = 0x84;
+        buffer[buffer_index+32] = 0x83;
+        buffer[buffer_index+32+1] = 0x84;
+      }
+      if ( cell == TILE_DIR_E ){
+        buffer[buffer_index] = 0x84;
+        buffer[buffer_index+1] = 0x84;
+        buffer[buffer_index+32] = 0x83;
+        buffer[buffer_index+32+1] = 0x83;
+      }
+      if ( cell == TILE_DIR_S ){
+        buffer[buffer_index] = 0x84;
+        buffer[buffer_index+1] = 0x83;
+        buffer[buffer_index+32] = 0x84;
+        buffer[buffer_index+32+1] = 0x83;
+      }
+      if ( cell == TILE_DIR_W ){
+        buffer[buffer_index] = 0x83;
+        buffer[buffer_index+1] = 0x83;
+        buffer[buffer_index+32] = 0x84;
+        buffer[buffer_index+32+1] = 0x84;
+      }
+      if ( cell == TILE_DIR_SLIDE ){
+        buffer[buffer_index] = 0xF8;
+        buffer[buffer_index+1] = 0xFA;
+        buffer[buffer_index+32] = 0xF9;
+        buffer[buffer_index+32+1] = 0xFB;
+      }
+      
       //If this is an enemy waypoint, draw it as water and update the enemy waypoint list
       if ( cell >= TILE_ENEMY_WAYPOINT_1 && cell <= TILE_ENEMY_WAYPOINT_6 ){
         enemy_waypoints_x[cell-TILE_ENEMY_WAYPOINT_1] = 8 + (x<<4);

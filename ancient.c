@@ -124,17 +124,18 @@ void main(void)
   //player_set_spawn_position( 4, 11, 120, 20 );
   player_set_state( PLAYER_STATE_VISIBLE );
   
-  player_set_map_position( 4, 9 );
-  player_set_position( 120, 60 );
+  player_set_map_position( 6, 3 );
+  player_set_position( 140, 20 );
   room_load_current();
   
+  //Set initial barrier state
   ancient_is_barrier_active = true;
+  pickup_collected_dash = true;
   
   //Dash testing
-  pickup_visible_dash = true;
-  pickup_x = 32;
-  pickup_y = 32;
-  
+  //pickup_visible_dash = true;
+  //pickup_x = 32;
+  //pickup_y = 32;
   
   // enable rendering
   ppu_on_all();

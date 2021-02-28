@@ -5,10 +5,12 @@
 #define PLAYER_STATE_SUBMERGED 2
 #define PLAYER_STATE_DEAD 8
 #define PLAYER_STATE_REFORMING 16
+#define PLAYER_STATE_SLIDING 32
 
 #define PALETTE_NORMAL 0x01
 #define PALETTE_DEAD 0x02
 #define PALETTE_SUBMERGED 0x03
+
 
 extern char player_map_x, player_map_y;
 extern char player_pos_x[], player_pos_y[];

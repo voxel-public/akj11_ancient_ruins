@@ -17,6 +17,12 @@
 #define TILE_WALL 0x01
 #define TILE_FLOOR 0x00
 #define TILE_SPAWN 24
+#define TILE_DIR_N 43
+#define TILE_DIR_E 44
+#define TILE_DIR_S 45
+#define TILE_DIR_W 46
+#define TILE_DIR_SLIDE 27
+
 extern char room_data[ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT];
 extern const char* room_map[];
 
