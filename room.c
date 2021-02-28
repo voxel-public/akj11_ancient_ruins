@@ -198,7 +198,9 @@ void room_draw( void ){
         buffer[buffer_index+32] = 0xF9;
         buffer[buffer_index+32+1] = 0xFB;
       }
-      
+      if ( cell == TILE_BEGIN ){
+        cell = TILE_FLOOR;
+      }
       //If this is an enemy waypoint, draw it as water and update the enemy waypoint list
       if ( cell >= TILE_ENEMY_WAYPOINT_1 && cell <= TILE_ENEMY_WAYPOINT_6 ){
         enemy_waypoints_x[cell-TILE_ENEMY_WAYPOINT_1] = 8 + (x<<4);

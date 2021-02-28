@@ -1,5 +1,5 @@
 #include "ancient.h"
-#include "plan.h"
+//#include "plan.h" 
 //Ancient ruins
 //Alakajam 11 entry by voxel
 #include <stdlib.h>
@@ -17,9 +17,6 @@
 // link the pattern table into CHR ROM
 //#link "chr_generic.s"
 
-// BCD arithmetic support
-#include "bcd.h"
-//#link "bcd.c"
 
 // VRAM update buffer
 #include "vrambuf.h"
@@ -120,17 +117,14 @@ void main(void)
   setup_graphics();
 
   player_set_spawn_position( 4, 10, 120, 140 );
-  
-  //player_set_spawn_position( 4, 11, 120, 20 );
   player_set_state( PLAYER_STATE_VISIBLE );
   
-  player_set_map_position( 6, 3 );
-  player_set_position( 140, 20 );
+  player_set_map_position( 4, 9 );
+  player_set_position( 120, 60 );
   room_load_current();
   
   //Set initial barrier state
   ancient_is_barrier_active = true;
-  pickup_collected_dash = true;
   
   //Dash testing
   //pickup_visible_dash = true;

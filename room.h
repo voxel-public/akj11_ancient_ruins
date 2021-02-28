@@ -22,6 +22,7 @@
 #define TILE_DIR_S 45
 #define TILE_DIR_W 46
 #define TILE_DIR_SLIDE 27
+#define TILE_BEGIN 22
 
 extern char room_data[ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT];
 extern const char* room_map[];

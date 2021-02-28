@@ -76,6 +76,9 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 0.8.2	Danger music
 0.8.3	Dash effect
 0.8.4 	Pickup effect
+0.8.5 	Barrier switch
+0.8.6	Die
+0.8.7	Reform
 
 0.10	Interest
 0.10.1	Critters?
