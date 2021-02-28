@@ -31,6 +31,12 @@
 //#link "player.c"
 #include "mapdata.h"
 //#link "mapdata.c"
+#include "pickups.h"
+//#link "pickups.c"
+
+#include "mapview.h"
+//#link "mapview.c"
+
 
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] = { 
@@ -62,9 +68,14 @@ void main(void)
   char oam_id, pad;
   setup_graphics();
   
-  player_set_spawn_position( 1, 1, 120, 140 );
+  player_set_spawn_position( 4, 9, 120, 140 );
   player_set_state( PLAYER_STATE_VISIBLE );
   ancient_player_spawn_at_spawn_point();
+  
+  //Dash testing
+  pickup_visible_dash = true;
+  pickup_x = 32;
+  pickup_y = 32;
   
   // enable rendering
   ppu_on_all();
@@ -73,10 +84,14 @@ void main(void)
     ancient_is_animation_frame = ancient_frame_count % 8 == 0;
     ++ancient_frame_count;
     pad = pad_poll( 0 );
+
     player_tick( pad );
+    pickup_collision_check();
     oam_id = 0;
     //draw player
     oam_id = player_draw_oam( oam_id );
+    //draw pickups
+    oam_id = pickup_draw_oam( oam_id );
     //Hide any extra unused oam
     oam_hide_rest( oam_id );
     ppu_wait_frame();
@@ -86,19 +101,19 @@ void main(void)
 void ancient_player_left_room( char direction ){
   switch( direction ){
     case DIR_NORTH:
-      player_set_position( player_pos_x, ROOM_HEIGHT - 2 );
+      player_set_position( player_pos_x[0], ROOM_HEIGHT - 8 );
       player_set_map_position( player_map_x, player_map_y - 1 );
       break;
     case DIR_SOUTH:
-      player_set_position( player_pos_x, 2 );
+      player_set_position( player_pos_x[0], 8 );
       player_set_map_position( player_map_x, player_map_y + 1 );
       break;
     case DIR_EAST:
-      player_set_position( 2, player_pos_y );
+      player_set_position( 8, player_pos_y[0] );
       player_set_map_position( player_map_x + 1, player_map_y );
       break;
     case DIR_WEST:
-      player_set_position( ROOM_WIDTH - 2, player_pos_y );
+      player_set_position( ROOM_WIDTH - 8, player_pos_y[0] );
       player_set_map_position( player_map_x - 1, player_map_y );
       break;
   }

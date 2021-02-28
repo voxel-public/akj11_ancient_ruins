@@ -11,7 +11,7 @@
 #define PALETTE_SUBMERGED 0x03
 
 extern char player_map_x, player_map_y;
-extern char player_pos_x, player_pos_y;
+extern char player_pos_x[], player_pos_y[];
 extern char player_state;
 extern char player_spawn_map_x, player_spawn_map_y, player_spawn_pos_x, player_spawn_pos_y;
 

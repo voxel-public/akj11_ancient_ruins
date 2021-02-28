@@ -2,24 +2,16 @@
 #include "neslib.h"
 #include "player.h"
 #include "mapdata.h"
+#include "mapview.h"
+#include "pickups.h"
+
+#define TILE_PICKUP_MAP 26
+#define TILE_PICKUP_DASH 23
+#define TILE_WATER 0x80
+#define TILE_WALL 0x01
+#define TILE_FLOOR 0x00
 
 char room_data[ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT];
-
-const char room_test_data1[] = {
-  0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x80, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-  0x01, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01,
-  0x01, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01,
-  0x01, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x01,
-  0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-  0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01,
-  0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01,
-  0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01,
-  0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01,
-  0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x01,
-  0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01
-};
 
 const char* room_map[] = {
   map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
@@ -57,7 +49,8 @@ char room_is_square_clear( char x, char y, char size ){
 }
 
 void room_load( const char source[] ){
-  char i = 0;
+  char i;
+  i = 0;
   while( i < ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT ){
     room_data[i] = source[i];
     ++i;
@@ -69,38 +62,55 @@ void room_load( const char source[] ){
 void room_draw( void ){
   char buffer[32*2]; //Two rows of nametable data to draw
   char x, y, data_index, prev_data_index, buffer_index, cell;
-  
+  char is_map_room, is_dash_room;
+  //Assume no pickups are in this room until we find some
+  is_map_room = false;
+  is_dash_room = false;
+  pickup_entered_room(); //Clears any pickups
+  mapview_entered_room();
   for ( y = 0; y < ROOM_DATA_HEIGHT; ++y ){
     for ( x = 0; x < ROOM_DATA_WIDTH; ++x ){
       data_index = y * ROOM_DATA_WIDTH + x;
       buffer_index = x * 2;
       cell = room_data[data_index];
-      if ( cell == 0 ){ //Empty
+      //Check if this cell is a pickup spawn
+      if ( cell == TILE_PICKUP_MAP ){
+        is_map_room = true;
+        cell = TILE_FLOOR;
+        pickup_entered_map_room( 8 + (x<<4), 8 + (y<<4) );
+      }
+      if ( cell == TILE_PICKUP_DASH ){
+        is_dash_room = true;
+        cell = TILE_FLOOR;
+        pickup_entered_dash_room( 8 + (x<<4), 8 + (y<<4) );
+      }
+      if ( cell == TILE_FLOOR ){ //Empty floor tile
+        //Check for walls to North or West and add shadows to floor if found
         buffer[buffer_index] = TILE_EMPTY;
         buffer[buffer_index+1] = TILE_EMPTY;
         buffer[buffer_index+32] = TILE_EMPTY;
         buffer[buffer_index+32+1] = TILE_EMPTY;
         if ( y > 0 ){
           prev_data_index = (y-1) * ROOM_DATA_WIDTH + x;
-          buffer[buffer_index+1] = room_data[prev_data_index] == 1 ? TILE_SHADOW : TILE_EMPTY;
-	  buffer[buffer_index] = room_data[prev_data_index] == 1 ? TILE_SHADOW : buffer[buffer_index];
+          buffer[buffer_index+1] = room_data[prev_data_index] == TILE_WALL ? TILE_SHADOW : TILE_EMPTY;
+	  buffer[buffer_index] = room_data[prev_data_index] == TILE_WALL ? TILE_SHADOW : buffer[buffer_index];
         }
         if ( x > 0 ){
           prev_data_index = y * ROOM_DATA_WIDTH + ( x - 1 );
-          buffer[buffer_index+32] = room_data[prev_data_index] == 1 ? TILE_SHADOW : TILE_EMPTY;
-          buffer[buffer_index] = room_data[prev_data_index] == 1 ? TILE_SHADOW : buffer[buffer_index];
+          buffer[buffer_index+32] = room_data[prev_data_index] == TILE_WALL ? TILE_SHADOW : TILE_EMPTY;
+          buffer[buffer_index] = room_data[prev_data_index] == TILE_WALL ? TILE_SHADOW : buffer[buffer_index];
         }
         if ( x > 0 && y > 0 ){
           prev_data_index = ( y - 1 ) * ROOM_DATA_WIDTH + ( x - 1 );
-          buffer[buffer_index] = room_data[prev_data_index] > 0 ? TILE_SHADOW : buffer[buffer_index];
+          buffer[buffer_index] = room_data[prev_data_index] == TILE_WALL ? TILE_SHADOW : buffer[buffer_index];
         }
         
-      } else if ( cell == 1 ){
+      } else if ( cell == TILE_WALL ){
         buffer[buffer_index] = 0xF4;
         buffer[buffer_index+1] = 0xF6;
         buffer[buffer_index+32] = 0xF5;
         buffer[buffer_index+32+1] = 0xF7;
-      } else if ( cell == 0x80 ){
+      } else if ( cell == TILE_WATER ){
         buffer[buffer_index] = 0x03;
         buffer[buffer_index+1] = 0x03;
         buffer[buffer_index+32] = 0x03;

@@ -6,8 +6,8 @@
 #define ROOM_DATA_HEIGHT 13
 #define ROOM_HEIGHT 208
 #define ROOM_WIDTH 240
-#define ROOM_MAP_WIDTH 3
-#define ROOM_MAP_HEIGHT 3
+#define ROOM_MAP_WIDTH 16
+#define ROOM_MAP_HEIGHT 16
 #define TILE_EMPTY 0x00
 #define TILE_SHADOW 0x02
 #define TILE_WATER 0x80

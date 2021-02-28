@@ -35,20 +35,20 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 *0.5.3	Map ingame
 	Convert room data to bytecode
         Layout map in ROM
-0.5.4	Map collectible art
-0.5.5	Map interface art
-0.5.6	Track room status
+*0.5.4	Map collectible art
+*0.5.5	Map interface art
+*0.5.6	Track room status
 		Unknown
                 Explored
                 Adjacent (been in a neighbouring room)
-0.5.7	Render map
-0.5.8	Don't render map pickup if already collected
+*0.5.7	Render map
+*0.5.8	Don't render map pickup if already collected
 
 0.6 	Dash
-0.6.1	Dash collectible art
-0.6.2	Dash effect art
-0.6.3	Dash effect
-0.6.4	Don't render dash pickup if already collected
+*0.6.1	Dash collectible art
+*0.6.2	Dash effect art
+*0.6.3	Dash effect
+*0.6.4	Don't render dash pickup if already collected
 
 0.7 	Enemy
 0.7.1	Enemy prototype
@@ -57,15 +57,20 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 0.7.4 	Enemy seek behaviour
 0.7.5	Enemy polish
 
-0.8	Audio
+0.8 	Pushmaze
+0.8.1	Tile art
+0.8.2	Tiles enforce movement
+0.8.3 	Tiles disable dash
+
+0.9	Audio
 0.8.1	General music
 0.8.2	Danger music
 0.8.3	Dash effect
 0.8.4 	Pickup effect
 
-0.9	Interest
-0.9.1	Critters?
-0.9.2	More interesting map tiles
+0.10	Interest
+0.10.1	Critters?
+0.10.2	More interesting map tiles
 
 Game Idea: ADVENTURELIKE
 
