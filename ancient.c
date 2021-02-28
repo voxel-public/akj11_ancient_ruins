@@ -1,3 +1,4 @@
+
 #include "ancient.h"
 //#include "plan.h" 
 //Ancient ruins
@@ -14,13 +15,22 @@
 // include CC65 NES Header (PPU)
 #include <nes.h>
 
-// link the pattern table into CHR ROM
-//#link "chr_generic.s"
-
+#include "bcd.h"
+//#link "bcd.c"
 
 // VRAM update buffer
 #include "vrambuf.h"
 //#link "vrambuf.c"
+
+// link the pattern table into CHR ROM
+//#link "chr_generic.s"
+
+//#link "famitone2.s"
+//#link "music_dangerstreets.s"
+extern const char danger_streets_music_data[];
+//#link "demosounds.s"
+extern const char demo_sounds[];
+
 
 #include "room.h"
 //#link "room.c"
@@ -79,6 +89,12 @@ void setup_graphics() {
   // set palette colors
   pal_all(PALETTE);
 }
+// set up famitone library
+void setup_audio() {
+  famitone_init(danger_streets_music_data);
+  sfx_init(demo_sounds);
+  nmi_set_callback(famitone_update);
+}
 
 void ancient_screen_flash( void ){
   char duration = 4;
@@ -114,13 +130,18 @@ void ancient_toggle_barrier( void ){
 void main(void)
 {
   char oam_id, pad;
+  ppu_off();
+    
+  setup_audio();
   setup_graphics();
-
+  
   player_set_spawn_position( 4, 10, 120, 140 );
   player_set_state( PLAYER_STATE_VISIBLE );
   
   player_set_map_position( 4, 9 );
   player_set_position( 120, 60 );
+  
+
   room_load_current();
   
   //Set initial barrier state
@@ -139,7 +160,9 @@ void main(void)
     ++ancient_frame_count;
     pad = pad_poll( 0 );
     if ( pad & PAD_A ){
-      ancient_toggle_barrier();
+      ppu_off();
+      room_load_current();
+      ppu_on_all();
     }
     player_tick( pad );
     pickup_collision_check();
@@ -194,6 +217,7 @@ void ancient_player_spawn_at_spawn_point( void ){
   player_set_position( player_spawn_pos_x, player_spawn_pos_y );
   room_load_current();
   player_set_state( PLAYER_STATE_VISIBLE | PLAYER_STATE_REFORMING );
+  sfx_play( 0, 0 );
   ppu_on_all();
   ancient_frame_count = 0;
 }

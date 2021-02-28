@@ -72,11 +72,16 @@ char room_is_square_wet( char x, char y, char size ){
 
 
 void room_load( const char source[] ){
-  char i;
-  i = 0;
-  while( i < ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT ){
-    room_data[i] = source[i];
-    ++i;
+  char count, value, runlength, source_cursor;
+  count = 0;
+  source_cursor = 0;
+  while( count < ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT ){
+    runlength = source[source_cursor++];
+    value = source[source_cursor++];
+    while( runlength > 0 ){
+      room_data[count++] = value;
+      --runlength;
+    }
   }
   room_draw();
 }

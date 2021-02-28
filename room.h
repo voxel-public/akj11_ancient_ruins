@@ -24,7 +24,7 @@
 #define TILE_DIR_SLIDE 27
 #define TILE_BEGIN 22
 
-extern char room_data[ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT];
+extern char room_data[];
 extern const char* room_map[];
 
 //Draw current room data to screen, assuming PPU off
