@@ -32,7 +32,7 @@ void enemy_deactivate(){
 void enemy_activate(){
   char i = 0;
   enemy_is_active = true;
-  enemy_target_waypoint = 1;  
+  enemy_target_waypoint = 0;  
   while( i < ENEMY_POS_COUNT ){
     enemy_pos_x[i] = enemy_waypoints_x[5];
     enemy_pos_y[i] = enemy_waypoints_y[5];

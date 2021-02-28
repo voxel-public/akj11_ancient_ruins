@@ -1,16 +1,15 @@
 #include "room.h"
 #include "neslib.h"
+#include "vrambuf.h"
 #include "player.h"
 #include "mapdata.h"
 #include "mapview.h"
 #include "pickups.h"
 #include "enemy.h"
+#include "ancient.h"
 
 #define TILE_PICKUP_MAP 26
 #define TILE_PICKUP_DASH 23
-#define TILE_WATER 0x80
-#define TILE_WALL 0x01
-#define TILE_FLOOR 0x00
 
 #define TILE_ENEMY_WAYPOINT_1 36
 #define TILE_ENEMY_WAYPOINT_2 37
@@ -111,6 +110,64 @@ void room_draw( void ){
         cell = TILE_FLOOR;
         pickup_entered_dash_room( 8 + (x<<4), 8 + (y<<4) );
       }
+      if ( cell == TILE_SPAWN ){
+        //is the spawn active?
+        if ( player_map_x == player_spawn_map_x &&
+          player_map_y == player_spawn_map_y ){
+          buffer[buffer_index] = 0xEC;
+          buffer[buffer_index+1] = 0xEE;
+          buffer[buffer_index+32] = 0xED;
+	  buffer[buffer_index+33] = 0xEF;
+        } else {
+          buffer[buffer_index] = 0xE8;
+          buffer[buffer_index+1] = 0xEA;
+          buffer[buffer_index+32] = 0xE9;
+	  buffer[buffer_index+33] = 0xEB;
+        }
+      }
+      if ( cell == TILE_BARRIER_A ){
+        if ( ancient_is_barrier_active ){
+          buffer[buffer_index] = 0x0C;
+          buffer[buffer_index+1] = 0x0C;
+          buffer[buffer_index+32] = 0x0C;
+          buffer[buffer_index+32+1] = 0x0C;
+          room_data[data_index] = TILE_WALL;
+        } else {
+          buffer[buffer_index] = 0x0B;
+          buffer[buffer_index+1] = 0x0B;
+          buffer[buffer_index+32] = 0x0B;
+          buffer[buffer_index+32+1] = 0x0B;
+          room_data[data_index] = TILE_FLOOR;
+        }
+      }
+      if ( cell == TILE_BARRIER_B ){
+        if ( !ancient_is_barrier_active ){
+          buffer[buffer_index] = 0x0F;
+          buffer[buffer_index+1] = 0x0F;
+          buffer[buffer_index+32] = 0x0F;
+          buffer[buffer_index+32+1] = 0x0F;
+          room_data[data_index] = TILE_WALL;
+        } else {
+          buffer[buffer_index] = 0x0B;
+          buffer[buffer_index+1] = 0x0B;
+          buffer[buffer_index+32] = 0x0B;
+          buffer[buffer_index+32+1] = 0x0B;
+          room_data[data_index] = TILE_FLOOR;
+        }
+      }
+      if ( cell == TILE_SWITCH ){
+        if ( ancient_is_barrier_active ){
+          buffer[buffer_index] = 0xC8;
+          buffer[buffer_index+1] = 0xCA;
+          buffer[buffer_index+32] = 0xC9;
+          buffer[buffer_index+32+1] = 0xCB;
+        } else {
+          buffer[buffer_index] = 0xF0;
+          buffer[buffer_index+1] = 0xF2;
+          buffer[buffer_index+32] = 0xF1;
+          buffer[buffer_index+32+1] = 0xF3;
+        }
+      }
       //If this is an enemy waypoint, draw it as water and update the enemy waypoint list
       if ( cell >= TILE_ENEMY_WAYPOINT_1 && cell <= TILE_ENEMY_WAYPOINT_6 ){
         enemy_waypoints_x[cell-TILE_ENEMY_WAYPOINT_1] = 8 + (x<<4);
@@ -172,4 +229,15 @@ char room_get_tile_at_pixel( char x, char y ){
   ty = y >> 4;	 
   data_index = ty * ROOM_DATA_WIDTH + tx;
   return ( tx >= ROOM_DATA_WIDTH || ty >= ROOM_DATA_HEIGHT ) ? 0x00 : room_data[data_index];
+}
+
+void room_activate_spawn_at_pixel( char x, char y ){
+  char tx, ty;
+  char bytes_top[] = { 0xEC, 0xEE };
+  char bytes_bottom[] = { 0xED, 0xEF };
+  //convert from pixel position to onscreen tiles
+  tx = ( x >> 4 ) * 2 + 1;
+  ty = ( y >> 4 ) * 2 + 1;	 
+  vrambuf_put( NTADR_A( tx, ty ), bytes_top, 2 );
+  vrambuf_put( NTADR_A( tx, ty + 1 ), bytes_bottom, 2 );
 }

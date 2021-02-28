@@ -20,6 +20,7 @@ char player_facing_right = true;
 char player_animation_frame = 0;
 char player_pos_x[5], player_pos_y[5];
 char player_map_x, player_map_y;
+char player_prev_tx, player_prev_ty;
 char player_state;
 char player_spawn_map_x, player_spawn_map_y, player_spawn_pos_x, player_spawn_pos_y;
 char player_dash_duration;
@@ -41,31 +42,25 @@ void player_set_position( char x, char y ){
 
 void player_tick( char pad ){
   char i;
+  char tx, ty;
   char future_x;
   char future_y;
   char lead_x = 0;
   char lead_y = 0;
   char is_moving = false;
   char dx, dy;
+  char tile;
   
+  //Update trail positions
   i = 4;
   while( i >= 1 ){
     player_pos_x[i] = player_pos_x[i-1];
     player_pos_y[i] = player_pos_y[i-1];
     --i; 
   }
-  /*
-  if ( player_dash_duration > 0 ){
-    player_dash_duration -= 1;
-    is_moving = true;
-    dx = player_dash_dx;
-    dy = player_dash_dy;
-  } else {
-  */
-  //Start dash?
+  
+  // Dash?
   if ( pad & PAD_B && pickup_collected_dash ){
-    //player_dash_dx = 0;
-    //player_dash_dy = 0;
     if ( pad & PAD_LEFT ){
       dx = -PLAYER_DASH_SPEED;
       player_facing_right = false;
@@ -84,11 +79,7 @@ void player_tick( char pad ){
       dy = PLAYER_DASH_SPEED;
       is_moving = true;
     }
-    if ( is_moving ){
-      //player_dash_duration = PLAYER_DASH_DURATION;
-    }
   } else {  //Normal movement
-  
     //Player control input
     if ( pad & PAD_LEFT ){
       dx = -1;
@@ -121,7 +112,24 @@ void player_tick( char pad ){
   if ( player_state & ( PLAYER_STATE_DEAD | PLAYER_STATE_REFORMING ) ){
     return;
   }
-
+  //Check if the player has stepped onto a new tile
+  tx = ( player_pos_x[0] >> 4 ) * 2 + 1;
+  ty = ( player_pos_y[0] >> 4 ) * 2 + 1;
+  if ( tx != player_prev_tx || ty != player_prev_ty ){
+    tile = room_get_tile_at_pixel( player_pos_x[0], player_pos_y[0] );
+    if ( tile == TILE_SPAWN ){
+      if ( player_map_x != player_spawn_map_x || player_map_y != player_spawn_map_y ){
+        ancient_screen_flash();
+        player_set_spawn_position( player_map_x, player_map_y, player_pos_x[0], player_pos_y[0] );
+        room_activate_spawn_at_pixel( player_pos_x[0], player_pos_y[0] );
+      }
+    }
+    if ( tile == TILE_SWITCH ){
+      ancient_toggle_barrier();
+    }
+  }
+  
+  
   //Movement code has ended up a bit weird i'll admit
   //Apply y movement
   while( dy != 0 ){
@@ -174,6 +182,10 @@ void player_tick( char pad ){
     else
       player_animation_frame = 1;
   }
+  
+
+  player_prev_tx = tx;
+  player_prev_ty = ty;
   
 }
 

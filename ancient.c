@@ -47,7 +47,7 @@ const char PALETTE[32] = {
 
   0x11,0x28,0x0F,0x00,	// background palette 0
   0x1C,0x20,0x2C,0x00,	// background palette 1
-  0x00,0x10,0x20,0x00,	// background palette 2
+  0x03,0x13,0x23,0x00,	// background palette 2
   0x06,0x16,0x26,0x00,   // background palette 3
 
   0x17,0x37,0x18,0x00,	// sprite palette 0
@@ -55,31 +55,86 @@ const char PALETTE[32] = {
   0x0D,0x00,0x10,0x00,	// sprite palette 2
   0x02,0x02,0x02	// sprite palette 3
 };
+const char FLASH_PALETTE[32] = { 
+  0x30,			
 
+  0x30,0x30,0x30,0x30,
+  0x30,0x30,0x30,0x30,
+  0x30,0x30,0x30,0x30,
+  0x30,0x30,0x30,0x30,
+  
+  0x30,0x30,0x30,0x00,
+  0x30,0x30,0x30,0x00,
+  0x30,0x30,0x30,0x00,
+  0x30,0x30,0x30
+};
+
+char ancient_is_barrier_active;
 char ancient_is_animation_frame;
 char ancient_frame_count;
 // setup PPU and tables
 void setup_graphics() {
+  //clear any trash out of the vram buffer
+  vrambuf_clear();
+  set_vram_update( updbuf );
   // clear sprites
   oam_clear();
   // set palette colors
   pal_all(PALETTE);
 }
 
+void ancient_screen_flash( void ){
+  char duration = 4;
+  //set all colours to white
+  pal_all( FLASH_PALETTE );
+  //Wait a moment
+  while( duration > 0 ){
+    vrambuf_flush();
+    --duration;
+  }
+  //restore palette
+  pal_all( PALETTE );
+}
+
+void ancient_toggle_barrier( void ){
+  char duration = 4;
+  //set all colours to white
+  pal_all( FLASH_PALETTE );
+  vrambuf_flush();
+  ppu_off();
+  ancient_is_barrier_active = !ancient_is_barrier_active;
+  room_load_current();
+  ppu_on_all();
+  //Wait a moment
+  while( duration > 0 ){
+    vrambuf_flush();
+    --duration;
+  }
+  //restore palette
+  pal_all( PALETTE );  
+}
+
 void main(void)
 {
   char oam_id, pad;
   setup_graphics();
+
+  player_set_spawn_position( 4, 10, 120, 140 );
   
-  player_set_spawn_position( 4, 9, 120, 140 );
-  player_set_spawn_position( 4, 11, 120, 20 );
+  //player_set_spawn_position( 4, 11, 120, 20 );
   player_set_state( PLAYER_STATE_VISIBLE );
-  ancient_player_spawn_at_spawn_point();
+  
+  player_set_map_position( 4, 9 );
+  player_set_position( 120, 60 );
+  room_load_current();
+  
+  ancient_is_barrier_active = true;
   
   //Dash testing
   pickup_visible_dash = true;
   pickup_x = 32;
   pickup_y = 32;
+  
   
   // enable rendering
   ppu_on_all();
@@ -88,7 +143,9 @@ void main(void)
     ancient_is_animation_frame = ancient_frame_count % 8 == 0;
     ++ancient_frame_count;
     pad = pad_poll( 0 );
-
+    if ( pad & PAD_A ){
+      ancient_toggle_barrier();
+    }
     player_tick( pad );
     pickup_collision_check();
     enemy_tick();
@@ -101,7 +158,7 @@ void main(void)
     oam_id = enemy_draw_oam( oam_id );
     //Hide any extra unused oam
     oam_hide_rest( oam_id );
-    ppu_wait_frame();
+    vrambuf_flush();
   }
 }
 

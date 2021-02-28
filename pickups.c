@@ -1,7 +1,7 @@
 #include "pickups.h"
 #include "neslib.h"
 #include "player.h"
-
+#include "ancient.h"
 char pickup_collected_map;
 char pickup_collected_dash;
 char pickup_visible_map;
@@ -56,6 +56,7 @@ void pickup_collision_check( void ){
     ){
       pickup_visible_map = false;
       pickup_collected_map = true;
+      ancient_screen_flash();
     }
   }
   if ( pickup_visible_dash ){
@@ -66,6 +67,7 @@ void pickup_collision_check( void ){
     ){
       pickup_visible_dash = false;
       pickup_collected_dash = true;
+      ancient_toggle_barrier();
     }
   }
 }
