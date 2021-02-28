@@ -47,5 +47,6 @@ extern const char map_06_02[];
 extern const char map_04_12[];
 extern const char map_11_06[];
 extern const char map_09_09[];
+extern const char* room_map[];
 
 #endif

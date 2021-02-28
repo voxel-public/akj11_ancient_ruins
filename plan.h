@@ -72,13 +72,13 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 *0.8.6 	Pushtiles disable dash
 
 0.9	Audio
-0.8.1	General music
-0.8.2	Danger music
-0.8.3	Dash effect
-0.8.4 	Pickup effect
-0.8.5 	Barrier switch
-0.8.6	Die
-0.8.7	Reform
+*0.9.1	General music (terrible!)
+*0.9.2	Danger music (also bad but less frequent!)
+*0.9.3	Dash effect
+*0.9.4 	Pickup effect
+*0.9.5 	Barrier switch
+*0.9.6	Die
+*0.9.7	Reform
 
 0.10	Interest
 0.10.1	Critters?

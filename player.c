@@ -24,7 +24,7 @@ char player_map_x, player_map_y;
 char player_prev_tx, player_prev_ty;
 char player_state;
 char player_spawn_map_x, player_spawn_map_y, player_spawn_pos_x, player_spawn_pos_y;
-char player_dash_duration;
+char player_is_dashing;
 
 void player_set_map_position( char x, char y ){
   player_map_x = x % ROOM_MAP_WIDTH;
@@ -92,6 +92,9 @@ void player_tick( char pad ){
       dy = PLAYER_DASH_SPEED;
       is_moving = true;
     }
+    if ( !player_is_dashing && is_moving )
+      sfx_play( 1, 3 );
+    player_is_dashing = is_moving;
   } else {  //Normal movement
     //Player control input
     if ( pad & PAD_LEFT ){
@@ -135,10 +138,12 @@ void player_tick( char pad ){
         ancient_screen_flash();
         player_set_spawn_position( player_map_x, player_map_y, player_pos_x[0], player_pos_y[0] );
         room_activate_spawn_at_pixel( player_pos_x[0], player_pos_y[0] );
+        sfx_play( 4, 0 );
       }
     }
     if ( tile == TILE_SWITCH ){
       ancient_toggle_barrier();
+      sfx_play( 0, 0 );
     }
     if ( tile == TILE_DIR_N ){
       player_slide_x = 0;

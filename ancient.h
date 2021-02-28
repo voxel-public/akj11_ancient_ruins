@@ -13,4 +13,9 @@ void ancient_player_dies( void );
 void ancient_player_spawn_at_spawn_point( void );
 void ancient_screen_flash( void );
 void ancient_toggle_barrier( void );
+
+void ancient_music_stop( void );
+void ancient_music_play_explore( void );
+void ancient_music_play_danger( void );
+
 #endif

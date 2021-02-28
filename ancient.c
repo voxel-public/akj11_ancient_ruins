@@ -1,4 +1,6 @@
 
+#include "plan.h"
+
 #include "ancient.h"
 //#include "plan.h" 
 //Ancient ruins
@@ -26,10 +28,10 @@
 //#link "chr_generic.s"
 
 //#link "famitone2.s"
-//#link "music_dangerstreets.s"
-extern const char danger_streets_music_data[];
-//#link "demosounds.s"
-extern const char demo_sounds[];
+//#link "music.s"
+extern const char music_data[];
+//#link "sfx.s"
+extern const char sfx_data[];
 
 
 #include "room.h"
@@ -79,6 +81,8 @@ const char FLASH_PALETTE[32] = {
 char ancient_is_barrier_active;
 char ancient_is_animation_frame;
 char ancient_frame_count;
+char ancient_music_status;
+
 // setup PPU and tables
 void setup_graphics() {
   //clear any trash out of the vram buffer
@@ -91,9 +95,33 @@ void setup_graphics() {
 }
 // set up famitone library
 void setup_audio() {
-  famitone_init(danger_streets_music_data);
-  sfx_init(demo_sounds);
-  nmi_set_callback(famitone_update);
+  famitone_init( music_data );
+  sfx_init( sfx_data );
+  nmi_set_callback( famitone_update );
+  ancient_music_status = 0;
+}
+
+void ancient_title_screen( void ){
+  char pad;
+  ppu_off();
+  vram_adr( NTADR_A( 0, 0 ) );
+  vram_fill( 0, 32*30 );
+  vram_adr( NTADR_A( 3, 5 ) );
+  vram_write( "ESCAPE FROM FLOODED RUINS", 25 );
+  vram_adr( NTADR_A( 6, 11 ) );
+  vram_write( "MADE IN 48 HOURS FOR", 20 );
+  vram_adr( NTADR_A( 10, 13 ) );
+  vram_write( "ALAKAJAM 11", 11 );
+  vram_adr( NTADR_A( 12, 15 ) );
+  vram_write( "BY VOXEL", 8 );
+  vram_adr( NTADR_A( 11, 22 ) );
+  vram_write( "PRESS START", 11 );
+  ppu_on_all();
+  while( true ){
+    pad = pad_poll( 0 );
+    if ( pad & PAD_START )
+      break;
+  }
 }
 
 void ancient_screen_flash( void ){
@@ -135,6 +163,9 @@ void main(void)
   setup_audio();
   setup_graphics();
   
+  ancient_title_screen();
+  ppu_off();
+  
   player_set_spawn_position( 4, 10, 120, 140 );
   player_set_state( PLAYER_STATE_VISIBLE );
   
@@ -151,7 +182,7 @@ void main(void)
   //pickup_visible_dash = true;
   //pickup_x = 32;
   //pickup_y = 32;
-  
+  pickup_collected_dash = false;
   // enable rendering
   ppu_on_all();
   
@@ -159,11 +190,6 @@ void main(void)
     ancient_is_animation_frame = ancient_frame_count % 8 == 0;
     ++ancient_frame_count;
     pad = pad_poll( 0 );
-    if ( pad & PAD_A ){
-      ppu_off();
-      room_load_current();
-      ppu_on_all();
-    }
     player_tick( pad );
     pickup_collision_check();
     enemy_tick();
@@ -208,6 +234,8 @@ void ancient_player_dies( void ){
   if ( player_state & PLAYER_STATE_DEAD )
     return; //what is dead can never die
   ancient_frame_count = 0;
+  sfx_play( 0, 0 );
+  //sfx_play( 4, 0 );
   player_set_state( PLAYER_STATE_DEAD | PLAYER_STATE_VISIBLE );
 }
 
@@ -217,7 +245,23 @@ void ancient_player_spawn_at_spawn_point( void ){
   player_set_position( player_spawn_pos_x, player_spawn_pos_y );
   room_load_current();
   player_set_state( PLAYER_STATE_VISIBLE | PLAYER_STATE_REFORMING );
-  sfx_play( 0, 0 );
+  //sfx_play( 2, 0 );
   ppu_on_all();
   ancient_frame_count = 0;
+}
+
+void ancient_music_stop( void ){
+  music_stop( );
+}
+void ancient_music_play_explore( void ){
+  if ( ancient_music_status != 1 ){
+    ancient_music_status = 1;
+    music_stop();
+  }
+}
+void ancient_music_play_danger( void ){
+  if ( ancient_music_status != 2 ){
+    ancient_music_status = 2;
+    music_play( 1 );
+  }
 }

@@ -20,24 +20,7 @@
 
 char room_data[ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT];
 
-const char* room_map[] = {
-  map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_11_01, map_12_01, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_null, map_null, map_06_02, map_07_02, map_08_02, map_09_02, map_10_02, map_11_02, map_12_02, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_null, map_05_03, map_06_03, map_null, map_null, map_null, map_null, map_11_03, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_null, map_05_04, map_null, map_null, map_null, map_null, map_null, map_11_04, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_null, map_05_05, map_null, map_null, map_null, map_09_05, map_10_05, map_11_05, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_null, map_05_06, map_null, map_null, map_null, map_09_06, map_null, map_11_06, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_null, map_05_07, map_null, map_null, map_null, map_09_07, map_10_07, map_11_07, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_null, map_05_08, map_null, map_null, map_null, map_null, map_null, map_11_08, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_02_09, map_03_09, map_04_09, map_05_09, map_06_09, map_07_09, map_08_09, map_09_09, map_10_09, map_11_09, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_02_10, map_null, map_04_10, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_02_11, map_03_11, map_04_11, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_04_12, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_04_13, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
-  map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
-};
+
 
 //Note that visible onscreen space starts at 8x8
 char room_is_point_clear( char x, char y ){
@@ -90,11 +73,12 @@ void room_load( const char source[] ){
 void room_draw( void ){
   char buffer[32*2]; //Two rows of nametable data to draw
   char x, y, data_index, prev_data_index, buffer_index, cell;
-  char is_map_room, is_dash_room, is_enemy_room;
+  char is_map_room, is_dash_room, is_enemy_room, is_goal_room;
   //Assume no pickups are in this room until we find some
   is_map_room = false;
   is_dash_room = false;
   is_enemy_room = false;
+  is_goal_room = false;
   pickup_entered_room(); //Clears any pickups
   mapview_entered_room();
   enemy_deactivate();
@@ -206,6 +190,10 @@ void room_draw( void ){
       if ( cell == TILE_BEGIN ){
         cell = TILE_FLOOR;
       }
+      if ( cell == TILE_GOAL ){
+        is_goal_room = true;
+        cell = TILE_FLOOR;
+      }
       //If this is an enemy waypoint, draw it as water and update the enemy waypoint list
       if ( cell >= TILE_ENEMY_WAYPOINT_1 && cell <= TILE_ENEMY_WAYPOINT_6 ){
         enemy_waypoints_x[cell-TILE_ENEMY_WAYPOINT_1] = 8 + (x<<4);
@@ -252,8 +240,31 @@ void room_draw( void ){
   }
   vram_adr( NTADR_A( 1, 27 ) );
   vram_fill( TILE_SHADOW, 32 );
-  if ( is_enemy_room )
+  if ( is_enemy_room ){
     enemy_activate();
+    ancient_music_play_danger();
+  } else {
+    ancient_music_play_explore();
+  }
+  if ( is_map_room && pickup_collected_map ){
+    vram_adr( NTADR_A( 5, 2 ) );
+    vram_write( "PRESS SELECT FOR MAP", 20 );
+  }
+  if ( is_dash_room && pickup_collected_dash ){
+    vram_adr( NTADR_A( 7, 2 ) );
+    vram_write( "PRESS B FOR DASH", 16 );
+  }
+  if ( is_goal_room ){
+    vram_adr( NTADR_A( 3, 16 ) );
+    vram_write( "YOU HAVE ESCAPED THE RUINS", 27 );
+    vram_adr( NTADR_A( 8, 18 ) );
+    vram_write( "AND WON THE GAME!", 17 ); 
+    vram_adr( NTADR_A( 3, 20 ) );
+    vram_write( "THANK YOU FOR YOUR SERVICE", 27 );
+    vram_adr( NTADR_A( 3, 22 ) );
+    vram_write( "VOXEL 2021 FOR ALAKAJAM 11", 27 );
+    music_play( 0 );
+  }
 }
 
 void room_load_current( void ){

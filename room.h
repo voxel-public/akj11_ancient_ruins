@@ -7,7 +7,7 @@
 #define ROOM_HEIGHT 208
 #define ROOM_WIDTH 240
 #define ROOM_MAP_WIDTH 16
-#define ROOM_MAP_HEIGHT 16
+#define ROOM_MAP_HEIGHT 15
 #define TILE_EMPTY 0x00
 #define TILE_SHADOW 0x02
 #define TILE_WATER 0x80
@@ -23,9 +23,8 @@
 #define TILE_DIR_W 46
 #define TILE_DIR_SLIDE 27
 #define TILE_BEGIN 22
-
+#define TILE_GOAL 20
 extern char room_data[];
-extern const char* room_map[];
 
 //Draw current room data to screen, assuming PPU off
 void room_draw( void );

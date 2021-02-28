@@ -2,6 +2,8 @@
 #include "neslib.h"
 #include "player.h"
 #include "ancient.h"
+#include "room.h"
+
 char pickup_collected_map;
 char pickup_collected_dash;
 char pickup_visible_map;
@@ -57,6 +59,10 @@ void pickup_collision_check( void ){
       pickup_visible_map = false;
       pickup_collected_map = true;
       ancient_screen_flash();
+      sfx_play( 3, 0 );
+      ppu_off();
+      room_load_current();
+      ppu_on_all();
     }
   }
   if ( pickup_visible_dash ){
@@ -67,7 +73,11 @@ void pickup_collision_check( void ){
     ){
       pickup_visible_dash = false;
       pickup_collected_dash = true;
+      sfx_play( 3, 0 );
       ancient_toggle_barrier();
+      ppu_off();
+      room_load_current();
+      ppu_on_all();
     }
   }
 }
