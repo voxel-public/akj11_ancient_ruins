@@ -20,6 +20,8 @@ void room_draw( void );
 void room_load( const char source[] );
 char room_is_point_clear( char x, char y );
 char room_is_square_clear( char x, char y, char size );
+char room_is_point_wet( char x, char y );
+char room_is_square_wet( char x, char y, char size );
 void room_load_current( void );
 char room_get_tile_at_pixel( char x, char y );
 

@@ -51,11 +51,11 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 *0.6.4	Don't render dash pickup if already collected
 
 0.7 	Enemy
-0.7.1	Enemy prototype
-0.7.2	Kill player on contact
-0.7.3	Enemy patrol pathfinding 
-0.7.4 	Enemy seek behaviour
-0.7.5	Enemy polish
+*0.7.1	Enemy prototype
+*0.7.2	Kill player on contact
+*0.7.3	Enemy patrol pathfinding 
+*0.7.4 	Enemy seek behaviour
+*0.7.5	Enemy polish
 
 0.8 	Pushmaze
 0.8.1	Tile art

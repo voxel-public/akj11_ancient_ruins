@@ -4,12 +4,20 @@
 #include "mapdata.h"
 #include "mapview.h"
 #include "pickups.h"
+#include "enemy.h"
 
 #define TILE_PICKUP_MAP 26
 #define TILE_PICKUP_DASH 23
 #define TILE_WATER 0x80
 #define TILE_WALL 0x01
 #define TILE_FLOOR 0x00
+
+#define TILE_ENEMY_WAYPOINT_1 36
+#define TILE_ENEMY_WAYPOINT_2 37
+#define TILE_ENEMY_WAYPOINT_3 38
+#define TILE_ENEMY_WAYPOINT_4 39
+#define TILE_ENEMY_WAYPOINT_5 40
+#define TILE_ENEMY_WAYPOINT_6 41
 
 char room_data[ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT];
 
@@ -47,6 +55,22 @@ char room_is_square_clear( char x, char y, char size ){
     room_is_point_clear( x, y + size ) &&
     room_is_point_clear( x + size, y + size );
 }
+//Note that visible onscreen space starts at 8x8
+char room_is_point_wet( char x, char y ){
+  char tx, ty, data_index;
+  tx = x >> 4;
+  ty = y >> 4;
+  data_index = ty * ROOM_DATA_WIDTH + tx;
+  return tx >= ROOM_DATA_WIDTH || ty >= ROOM_DATA_HEIGHT || room_data[data_index] == TILE_WATER;
+}
+
+char room_is_square_wet( char x, char y, char size ){
+  return room_is_point_wet( x, y ) && 
+    room_is_point_wet( x + size, y ) && 
+    room_is_point_wet( x, y + size ) &&
+    room_is_point_wet( x + size, y + size );
+}
+
 
 void room_load( const char source[] ){
   char i;
@@ -62,18 +86,21 @@ void room_load( const char source[] ){
 void room_draw( void ){
   char buffer[32*2]; //Two rows of nametable data to draw
   char x, y, data_index, prev_data_index, buffer_index, cell;
-  char is_map_room, is_dash_room;
+  char is_map_room, is_dash_room, is_enemy_room;
   //Assume no pickups are in this room until we find some
   is_map_room = false;
   is_dash_room = false;
+  is_enemy_room = false;
   pickup_entered_room(); //Clears any pickups
   mapview_entered_room();
+  enemy_deactivate();
   for ( y = 0; y < ROOM_DATA_HEIGHT; ++y ){
     for ( x = 0; x < ROOM_DATA_WIDTH; ++x ){
       data_index = y * ROOM_DATA_WIDTH + x;
       buffer_index = x * 2;
       cell = room_data[data_index];
       //Check if this cell is a pickup spawn
+      //Draw it as a floor and set the pickup position appropriately
       if ( cell == TILE_PICKUP_MAP ){
         is_map_room = true;
         cell = TILE_FLOOR;
@@ -83,6 +110,14 @@ void room_draw( void ){
         is_dash_room = true;
         cell = TILE_FLOOR;
         pickup_entered_dash_room( 8 + (x<<4), 8 + (y<<4) );
+      }
+      //If this is an enemy waypoint, draw it as water and update the enemy waypoint list
+      if ( cell >= TILE_ENEMY_WAYPOINT_1 && cell <= TILE_ENEMY_WAYPOINT_6 ){
+        enemy_waypoints_x[cell-TILE_ENEMY_WAYPOINT_1] = 8 + (x<<4);
+        enemy_waypoints_y[cell-TILE_ENEMY_WAYPOINT_1] = 8 + (y<<4);
+        cell = TILE_WATER;
+        room_data[data_index] = TILE_WATER;
+        is_enemy_room = true;
       }
       if ( cell == TILE_FLOOR ){ //Empty floor tile
         //Check for walls to North or West and add shadows to floor if found
@@ -122,6 +157,8 @@ void room_draw( void ){
   }
   vram_adr( NTADR_A( 1, 27 ) );
   vram_fill( TILE_SHADOW, 32 );
+  if ( is_enemy_room )
+    enemy_activate();
 }
 
 void room_load_current( void ){

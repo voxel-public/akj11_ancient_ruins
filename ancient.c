@@ -37,6 +37,9 @@
 #include "mapview.h"
 //#link "mapview.c"
 
+#include "enemy.h"
+//#link "enemy.c"
+
 
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] = { 
@@ -69,6 +72,7 @@ void main(void)
   setup_graphics();
   
   player_set_spawn_position( 4, 9, 120, 140 );
+  player_set_spawn_position( 4, 11, 120, 20 );
   player_set_state( PLAYER_STATE_VISIBLE );
   ancient_player_spawn_at_spawn_point();
   
@@ -87,11 +91,14 @@ void main(void)
 
     player_tick( pad );
     pickup_collision_check();
+    enemy_tick();
     oam_id = 0;
     //draw player
     oam_id = player_draw_oam( oam_id );
     //draw pickups
     oam_id = pickup_draw_oam( oam_id );
+    //draw enemy
+    oam_id = enemy_draw_oam( oam_id );
     //Hide any extra unused oam
     oam_hide_rest( oam_id );
     ppu_wait_frame();
@@ -123,6 +130,8 @@ void ancient_player_left_room( char direction ){
 }
 
 void ancient_player_dies( void ){
+  if ( player_state & PLAYER_STATE_DEAD )
+    return; //what is dead can never die
   ancient_frame_count = 0;
   player_set_state( PLAYER_STATE_DEAD | PLAYER_STATE_VISIBLE );
 }

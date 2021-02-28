@@ -150,8 +150,7 @@ void player_tick( char pad ){
     }
   }
   
-  
-  
+
   //Exit rooms
   if ( player_pos_x[0] < 7 )
     ancient_player_left_room( DIR_WEST );
