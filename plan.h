@@ -31,8 +31,8 @@ Alakajam #11 48 hour gamejam entry for theme ANCIENT RUINS, made in 8bitworkshop
 
 0.5	Map
 *0.5.1	Map designed
-0.5.2	Map drawn in map editor
-0.5.3	Map ingame
+*0.5.2	Map drawn in map editor
+*0.5.3	Map ingame
 	Convert room data to bytecode
         Layout map in ROM
 0.5.4	Map collectible art

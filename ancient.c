@@ -29,6 +29,8 @@
 //#link "room.c"
 #include "player.h"
 //#link "player.c"
+#include "mapdata.h"
+//#link "mapdata.c"
 
 /*{pal:"nes",layout:"nes"}*/
 const char PALETTE[32] = { 

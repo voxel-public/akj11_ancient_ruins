@@ -1,6 +1,7 @@
 #include "room.h"
 #include "neslib.h"
 #include "player.h"
+#include "mapdata.h"
 
 char room_data[ROOM_DATA_WIDTH * ROOM_DATA_HEIGHT];
 
@@ -21,7 +22,22 @@ const char room_test_data1[] = {
 };
 
 const char* room_map[] = {
-  room_test_data1
+  map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_11_01, map_12_01, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_null, map_null, map_06_02, map_07_02, map_08_02, map_09_02, map_10_02, map_11_02, map_12_02, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_null, map_05_03, map_06_03, map_null, map_null, map_null, map_null, map_11_03, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_null, map_05_04, map_null, map_null, map_null, map_null, map_null, map_11_04, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_null, map_05_05, map_null, map_null, map_null, map_09_05, map_10_05, map_11_05, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_null, map_05_06, map_null, map_null, map_null, map_09_06, map_null, map_11_06, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_null, map_05_07, map_null, map_null, map_null, map_09_07, map_10_07, map_11_07, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_null, map_05_08, map_null, map_null, map_null, map_null, map_null, map_11_08, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_02_09, map_03_09, map_04_09, map_05_09, map_06_09, map_07_09, map_08_09, map_09_09, map_10_09, map_11_09, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_02_10, map_null, map_04_10, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_02_11, map_03_11, map_04_11, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_04_12, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_04_13, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
+  map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null, map_null,
 };
 
 //Note that visible onscreen space starts at 8x8
