@@ -112,7 +112,7 @@ void mapview( void ){
   ppu_off();
   //Restore the game screen
   //We don't do any resource swapping so we can just redraw the room as if we'd entered it
-  room_draw();
+  room_load_current();
   ppu_on_all();
 }
 
