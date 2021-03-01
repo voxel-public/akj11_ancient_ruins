@@ -23,6 +23,7 @@ char enemy_waypoints_x[ENEMY_WAYPOINT_COUNT];
 char enemy_waypoints_y[ENEMY_WAYPOINT_COUNT];
 char enemy_target_waypoint;
 char enemy_dest_x, enemy_dest_y;
+char enemy_prev_map_x, enemy_prev_map_y;
 
 void enemy_deactivate(){
   
@@ -31,13 +32,20 @@ void enemy_deactivate(){
 }
 void enemy_activate(){
   char i = 0;
-  enemy_is_active = true;
-  enemy_target_waypoint = 0;  
-  while( i < ENEMY_POS_COUNT ){
-    enemy_pos_x[i] = enemy_waypoints_x[5];
-    enemy_pos_y[i] = enemy_waypoints_y[5];
-    ++i;
+  //Allow enemy position to be preserved across map views
+  if ( enemy_prev_map_x != player_map_x || 
+      enemy_prev_map_y != player_map_y )
+  {
+    enemy_target_waypoint = 0;  
+    while( i < ENEMY_POS_COUNT ){
+      enemy_pos_x[i] = enemy_waypoints_x[5];
+      enemy_pos_y[i] = enemy_waypoints_y[5];
+      ++i;
+    }
   }
+  enemy_is_active = true;
+  enemy_prev_map_x = player_map_x;
+  enemy_prev_map_y = player_map_y;
 }
 
 
